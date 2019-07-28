@@ -2,8 +2,7 @@
   {
     "outputFileName": "wwwroot/lib/sircl/sircl-full.min.css",
     "inputFiles": [
-      "wwwroot/lib/sircl/sircl.css",
-      "wwwroot/lib/sircl/sircl-bootstrap4.css"
+      "wwwroot/lib/sircl/sircl.css"
     ]
   },
   {
@@ -28,9 +27,7 @@
     "outputFileName": "wwwroot/lib/sircl/sircl-full.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl/sircl.js",
-      "wwwroot/lib/sircl/sircl-bootstrap4.js",
       "wwwroot/lib/sircl/sircl-eventactions.js",
-      "wwwroot/lib/sircl/sircl-fa.js",
       "wwwroot/lib/sircl/sircl-unicons.js"
     ]
   },
