@@ -1,0 +1,24 @@
+@ECHO OFF
+SETLOCAL
+
+IF "%~1"=="" (
+   SET /P Version=Version: 
+) ELSE (
+   SET Version=%~1
+)
+
+MKDIR "%~dp0dist\sircl-%Version%"
+COPY "%~dp0src\VsNetSrc\wwwroot\lib\sircl\*.*" "%~dp0dist\sircl-%version%\"
+
+ECHO {^
+ "name": "sircl",^
+ "version": "%version%",^
+ "description": "Serverside Rendering Coding Library",^
+ "author": "Codetuner",^
+ "main": "sircl-full.min.js",^
+ "repository": {^
+ "type": "git",^
+ "url": "https://github.com/codetuner/Sircl"^
+ },^
+ "license": "MIT"^
+}>"%~dp0dist\sircl-%version%\package.json"

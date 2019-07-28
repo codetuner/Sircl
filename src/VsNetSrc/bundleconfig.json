@@ -1,0 +1,73 @@
+[
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-full.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl.css",
+      "wwwroot/lib/sircl/sircl-bootstrap4.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-bootstrap4.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-bootstrap4.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-legacy.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-legacy.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-full.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl.js",
+      "wwwroot/lib/sircl/sircl-bootstrap4.js",
+      "wwwroot/lib/sircl/sircl-eventactions.js",
+      "wwwroot/lib/sircl/sircl-fa.js",
+      "wwwroot/lib/sircl/sircl-unicons.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-bootstrap4.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-bootstrap4.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-eventactions.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-eventactions.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-fa.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-fa.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-legacy.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-legacy.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl/sircl-unicons.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl/sircl-unicons.js"
+    ]
+  }
+]
