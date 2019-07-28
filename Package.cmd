@@ -2,7 +2,7 @@
 SETLOCAL
 
 IF "%~1"=="" (
-   SET /P Version=Version: 
+   SET /P Version=Version ^(x.y.z^): 
 ) ELSE (
    SET Version=%~1
 )
@@ -22,3 +22,17 @@ ECHO {^
  },^
  "license": "MIT"^
 }>"%~dp0dist\sircl-%version%\package.json"
+
+PAUSE
+ECHO.
+ECHO Publish on NPM ?
+PAUSE
+
+PUSHD "%~dp0dist\sircl-%Version%"
+
+NPM login
+NPM publish
+
+POPD
+
+PAUSE

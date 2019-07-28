@@ -1,0 +1,1 @@
+{ "name": "sircl", "version": "1.0.0", "description": "Serverside Rendering Coding Library", "author": "Codetuner", "main": "sircl-full.min.js", "repository": { "type": "git", "url": "https://github.com/codetuner/Sircl" }, "license": "MIT"}
