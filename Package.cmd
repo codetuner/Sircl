@@ -9,6 +9,8 @@ IF "%~1"=="" (
 
 MKDIR "%~dp0dist\sircl-%Version%"
 COPY "%~dp0src\VsNetSrc\wwwroot\lib\sircl\*.*" "%~dp0dist\sircl-%version%\"
+DEL "%~dp0dist\sircl-latest\*.*" /q
+COPY "%~dp0src\VsNetSrc\wwwroot\lib\sircl\*.*" "%~dp0dist\sircl-latest\"
 
 ECHO {^
  "name": "sircl",^

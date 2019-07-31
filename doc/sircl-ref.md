@@ -315,7 +315,7 @@ If you define `method` on the element, with a value of "POST", a post request wi
 
 By default, the element itself is inline target of the call. You can override this by specifying an explicit `inline-target` attribute on the element.
 
-Note that if the server responds to the request with "202", the response is considered a mere acknowledgment, and the UI is not updated.
+If the server responds to the request with "202", the response is considered a mere acknowledgment, and the UI is not updated.
 
 Example:
 
@@ -329,10 +329,21 @@ Example:
 
 The selected value is passed both as "name=value" as well as "name=name&value=value", so clicking on the third radio
 button will issue a call to "<u>/SetCountry?code=ES&name=code&value=ES</u>".
-When clicking on one of several checkboxes with the same name, only the value of the currently changed checkbox is sent,
-and only if it is now becoming chekced. If the checkbox is unchecked, an empty value is passed.
 
+For checkboxes, both "name=value" is passed, where value is the value of the checked checkbox and empty for unchecked checkboxes.
+In addition, "name=name&value=value&checked=true|false" is sent, with as value, the value of the checkbox, checked or not.
 
+So for following checkbox:
+
+~~~html
+<label><input type="checkbox" name="delivery" value="quick" onchange-action="/SetOption" method="GET"/> Quick delivery</label>
+~~~
+
+If the checkbox is checked, the following call is made: "<u>/SetOption?delivery=quick&name=delivery&value=quick&checked=true</u>".
+
+If the checkbox is unchecked, the following call is made: "<u>/SetOption?delivery=&name=delivery&value=quick&checked=false</u>".
+
+If the server returns an error, the value is reverted. (Currently only for checkboxes.)
 
 ### On FORM elements
 
