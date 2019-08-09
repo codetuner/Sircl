@@ -1,4 +1,4 @@
-﻿/* Sircl Font Awesome extensions */
+﻿/* Sircl $$version$$ Font Awesome extensions */
 /* (c) Rudi Breedenraedt */
 
 /// Globals:

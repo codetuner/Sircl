@@ -1,4 +1,4 @@
-﻿/* Sircl unicons */
+﻿/* Sircl $$version$$ unicons */
 /* (c) Rudi Breedenraedt */
 
 /// Unicode-Icons:

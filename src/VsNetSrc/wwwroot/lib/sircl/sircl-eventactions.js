@@ -1,4 +1,4 @@
-﻿/* Sircl event-actions */
+﻿/* Sircl $$version$$ event-actions */
 /* (c) Rudi Breedenraedt */
 
 var __rb_eventactiontest = {
@@ -66,9 +66,9 @@ var __rb_eventactionfx = {
         }
         var onsuccess;
 		var onerror;
-		if (event.target.type == "checkbox") {
-			onerror = function() { event.target.checked = !event.target.checked; };
-		} // TODO for other form element types, use the onsuccessdeletage to set a "previousValue" expando property. On error: return to that previousValue if it exists, or use the defaultValue property if not.
+        if (event.target.type == "checkbox") {
+            onerror = function () { event.target.checked = !event.target.checked; };
+        } // TODO for other form element types, use the onsuccessdeletage to set a "previousValue" expando property. On error: return to that previousValue if it exists, or use the defaultValue property if not.
         __rb.submitInline(event, $(this), data, method, href, null, inlineTarget, false, null, onsuccess, onerror);
     },
     keyAction: function (event) {
@@ -200,3 +200,30 @@ $(document).ready(function () {
 
 });
 
+rbLoaderExtensions.push([function (loaded) {
+
+    // Timer events:
+    $(loaded).find("*[timer]").each(function () {
+        var ms = 1000 * $(this).attr("timer");
+        var element = $(this)[0];
+        for (var i = 0; i < element.attributes.length; i++) {
+            var value = element.attributes[i].value;
+            if (element.attributes[i].name == "ontimer-addclass") {
+                setTimeout(function (element, value) {
+                    $(element).addClass(value);
+                }, ms, element, value);
+            }
+            if (element.attributes[i].name == "ontimer-removeclass") {
+                setTimeout(function (element, value) {
+                    $(element).removeClass(value);
+                }, ms, element, value);
+            }
+            if (element.attributes[i].name == "ontimer-toglleclass") {
+                setTimeout(function (element, value) {
+                    $(element).toglleClass(value);
+                }, ms, element, value);
+            }
+        }
+    });
+
+}]);

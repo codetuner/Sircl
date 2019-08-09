@@ -425,6 +425,22 @@ When unchecked, the selector matches are also unchecked and disabled.
 
 When checked, the action is revered.
 
+### Timer events
+
+Elements having a `timer` attribute with a value expressed in seconds, can have following timer event actions triggered:
+
+#### `ontimer-addclass="classname"`
+
+Adds the given class to the current element after timer seconds of loading the element.
+
+#### `ontimer-removeclass="classname"`
+
+Removes the given class to the current element after timer seconds of loading the element.
+
+#### `ontimer-toggleclass="classname"`
+
+Toggles the given class to the current element after timer seconds of loading the element.
+
 ---
 
 ## Classes and Ids

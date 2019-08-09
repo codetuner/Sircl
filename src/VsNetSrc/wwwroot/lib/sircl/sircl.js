@@ -1,4 +1,4 @@
-﻿/* Sircl core */
+﻿/* Sircl $$version$$ core */
 /* (c) Rudi Breedenraedt */
 
 /// Globals:
@@ -72,7 +72,9 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
                     var location = jqXHR.getResponseHeader("Location") || window.location.href;
                     window.history.replaceState(null, document.title, location);
                     window.location.href = location;
-                }
+                },
+				//default: function (data, textStatus, jqXHR) {
+                //}
             },
             complete: function (jqXHR, textStatus) {
                 $(document.body).removeClass("load-in-progress");

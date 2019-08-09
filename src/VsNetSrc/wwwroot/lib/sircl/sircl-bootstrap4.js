@@ -1,4 +1,4 @@
-﻿/* Sircl bootstrap extensions */
+﻿/* Sircl $$version$$ bootstrap extensions */
 /* (c) Rudi Breedenraedt */
 
 /// Globals:

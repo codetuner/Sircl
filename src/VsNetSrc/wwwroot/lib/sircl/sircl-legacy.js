@@ -1,4 +1,4 @@
-﻿/* Sircl legacy */
+﻿/* Sircl $$version$$ legacy */
 /* (c) Rudi Breedenraedt */
 
 /// Components / features moved to legacy:
