@@ -226,4 +226,24 @@ rbLoaderExtensions.push([function (loaded) {
         }
     });
 
+    // Onload events:
+    $(loaded).find("*[onload-addclass]").each(function () {
+        var attrvalues = $(this).attr("onload-addclass").split(" on ");
+        var clss = attrvalues[0];
+        var target = (attrvalues.length > 1) ? $(attrvalues[1]) : $(this);
+        target.addClass(clss);
+    });
+    $(loaded).find("*[onload-removeclass]").each(function () {
+        var attrvalues = $(this).attr("onload-removeclass").split(" on ");
+        var clss = attrvalues[0];
+        var target = (attrvalues.length > 1) ? $(attrvalues[1]) : $(this);
+        target.removeClass(clss);
+    });
+    $(loaded).find("*[onload-toggleclass]").each(function () {
+        var attrvalues = $(this).attr("onload-toglleclass").split(" on ");
+        var clss = attrvalues[0];
+        var target = (attrvalues.length > 1) ? $(attrvalues[1]) : $(this);
+        target.toglleClass(clss);
+    });
+
 }]);

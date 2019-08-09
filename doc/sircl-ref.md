@@ -425,6 +425,23 @@ When unchecked, the selector matches are also unchecked and disabled.
 
 When checked, the action is revered.
 
+### On load events
+
+These actions are triggered when the content is loaded.
+
+#### `onload-addclass="classname [on target]"`
+
+Adds the given class to the current element or the given after loading the element.
+
+#### `onload-removeclass="classname [on target]"`
+
+Removes the given class to the current element or the given after loading the element.
+
+#### `onload-toggleclass="classname [on target]"`
+
+Toggles the given class to the current element or the given after loading the element.
+
+
 ### Timer events
 
 Elements having a `timer` attribute with a value expressed in seconds, can have following timer event actions triggered:
