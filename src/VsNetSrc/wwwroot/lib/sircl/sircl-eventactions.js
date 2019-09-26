@@ -14,6 +14,7 @@ var __rb_eventactionfx = {
         var selector = $(event.target).attr(event.data.selectorAttr);
         var target = $(selector);
         target.prop('checked', (!event.data.reverse) ? event.target.checked : !event.target.checked);
+        target.trigger('change');
     },
     enable: function (event) {
         var selector = $(event.target).attr(event.data.selectorAttr);
@@ -49,7 +50,7 @@ var __rb_eventactionfx = {
         target.html('');
     },
     action: function (event) {
-        var method = $(this).attr("method") || "GET";
+        var method = $(this).attr("method") || $(this).attr("formmethod") || "GET";
         var href = $(this).attr(event.data.selectorAttr);
         var value = $(event.target).val();
         if (event.target.type == "checkbox" && event.target.checked == false) value = "";
@@ -138,6 +139,8 @@ $(document).ready(function () {
     __rb_eventaction.registerEvents(document.body, ["*"], "onchange", ["propagate"], __rb_eventactiontest.true, __rb_eventactionfx.propagate, ["change"], false);
     __rb_eventaction.registerEvents(document.body, ["*"], "oninput", ["propagate"], __rb_eventactiontest.true, __rb_eventactionfx.propagate, ["input"], false);
     __rb_eventaction.registerEvents(document.body, ["*"], "onchange", ["action"], __rb_eventactiontest.true, __rb_eventactionfx.action, ["change"], false);
+    __rb_eventaction.registerEvents(document.body, ["*"], "onclick", ["action"], __rb_eventactiontest.true, __rb_eventactionfx.action, ["click"], false);
+    __rb_eventaction.registerEvents(document.body, ["*"], "ondblclick", ["action"], __rb_eventactiontest.true, __rb_eventactionfx.action, ["click"], false);
     __rb_eventaction.registerEvents(document.body, ["*"], "onkey", ["enter"], __rb_eventactiontest.true, __rb_eventactionfx.keyAction, ["keypress"], false);
 
     /// <* onhover-show="selector"> On hover, displays elements matching the given selector.
@@ -203,6 +206,7 @@ $(document).ready(function () {
 rbLoaderExtensions.push([function (loaded) {
 
     // Timer events:
+
     $(loaded).find("*[timer]").each(function () {
         var ms = 1000 * $(this).attr("timer");
         var element = $(this)[0];
@@ -227,6 +231,7 @@ rbLoaderExtensions.push([function (loaded) {
     });
 
     // Onload events:
+
     $(loaded).find("*[onload-addclass]").each(function () {
         var attrvalues = $(this).attr("onload-addclass").split(" on ");
         var clss = attrvalues[0];
@@ -244,6 +249,26 @@ rbLoaderExtensions.push([function (loaded) {
         var clss = attrvalues[0];
         var target = (attrvalues.length > 1) ? $(attrvalues[1]) : $(this);
         target.toglleClass(clss);
+    });
+
+    // Action-events:
+
+    $(loaded).find("*[enable-ifchecked-any]").each(function () {
+        var elem = this;
+        var target = $(this).attr("enable-ifchecked-any");
+        // Enable/disable depending on current checked state:
+        $(elem).prop("disabled", !$(target).is(":checked"));
+        // Add event handlers to update live:
+        $(target).on("change", function () { $(elem).prop("disabled", !$(target).is(":checked")); });
+    });
+
+    $(loaded).find("*[show-ifchecked-any]").each(function () {
+        var elem = this;
+        var target = $(this).attr("show-ifchecked-any");
+        // Show/hide depending on current checked state:
+        if ($(target).is(":checked")) $(elem).removeClass("hidden"); else $(elem).addClass("hidden");
+        // Add event handlers to update live:
+        $(target).on("change", function () { if ($(target).is(":checked")) $(elem).removeClass("hidden"); else $(elem).addClass("hidden"); });
     });
 
 }]);

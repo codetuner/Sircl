@@ -305,7 +305,7 @@ I.e: sets the `pink-bordered` class on elements with the `btn` class when hovere
 </div>
 ~~~
 
-### Change events
+### Actions
 
 #### `onchange-action="action-url"`
 
@@ -344,6 +344,21 @@ If the checkbox is checked, the following call is made: "<u>/SetOption?delivery=
 If the checkbox is unchecked, the following call is made: "<u>/SetOption?delivery=&name=delivery&value=quick&checked=false</u>".
 
 If the server returns an error, the value is reverted. (Currently only for checkboxes.)
+
+#### `onclick-action="action-url"`
+
+Similar to `onchange-action`, but the action-url is invoked on click.
+
+I.e. clicking the following button will trigger a GET request to "<u>/DoAction?active=true&name=active&value=true</u>":
+
+~~~html
+<button type="button" onclick-action="/DoAction" name="active" value="true">Activate!</button>
+~~~
+
+#### `ondblclick-action="action-url"`
+
+Similar to `onclick-action`, but the action-url is invoked on doubleclick.
+
 
 ### On FORM elements
 
@@ -413,17 +428,58 @@ If this checkbox or radio input is unchecked, the selector matches are hidden.
 
 Inverse of `ifchecked-show`.
 
-#### `oncheck-enable="css-selector"`
+#### `ifchecked-enable="css-selector"`
 
-When unchecked, the selector matches are disabled.
+When checked, the selector matches are enabled.
 
-When checked, the action is revered.
+When unchecked, the action is revered.
 
-#### `oncheck-cancheck="css-selector"`
+#### `ifchecked-disable="css-selector"`
 
-When unchecked, the selector matches are also unchecked and disabled.
+Inverse of `ifchecked-enable`.
 
-When checked, the action is revered.
+#### `ifchecked-check="css-selector"`
+
+When checked, the selector matches are also checked.
+
+When unchecked, the action is revered.
+
+#### `ifchecked-uncheck="css-selector"`
+
+Inverse of `ifchecked-check`.
+
+#### `ifvalid-show="css-selector"`
+
+If valid, the selector matches are made visible.
+
+#### `ifvalid-hide="css-selector"`
+
+If valid, the selector matches are made hidden.
+
+#### `ifvalid-enable="css-selector"`
+
+If valid, the selector matches are enabled.
+
+#### `ifvalid-disable="css-selector"`
+
+If valid, the selector matches are disabled.
+
+#### `iffocus-show="css-selector"`
+
+If the element has the focus, the selector matches are made visible.
+
+#### `iffocus-hide="css-selector"`
+
+If the element has the focus, the selector matches are made hidden.
+
+### Keyboard events
+
+#### `onkey-enter="ignore|submit"`
+
+Action to take when the `Enter` key is pressed:
+- ignore : the key is ignored (default action and propagation are disabled);
+- submit : the surrounding form is submitted. 
+
 
 ### On load events
 
@@ -457,6 +513,37 @@ Removes the given class to the current element after timer seconds of loading th
 #### `ontimer-toggleclass="classname"`
 
 Toggles the given class to the current element after timer seconds of loading the element.
+
+### Propagate events
+
+#### `on<click|dblclick|change|input>-propagate="on|off"`
+
+When value is `off`, propagation of the named event is blocked.
+
+
+---
+
+## Action Events
+
+Action Events are similar to Event Actions but with reversed roles. Their name is build by concatenating an action to be taken
+on the attributed element, when an event occurs on the elements the attribute's value is a selector for.
+
+#### `enable-ifchecked-any="css-selector"`
+
+Enabled the element if any of the css-selector matching elements is checked. Disable the element if none is checked.
+
+For instance, the following button will be enabled if and only if at least one of the checkboxes is checked:
+
+~~~html
+<input type="checkbox" class="item" name="id" value="1">
+<input type="checkbox" class="item" name="id" value="2">
+<input type="checkbox" class="item" name="id" value="3">
+<button type="submit" enable-ifchecked-any=".item">Delete selected</button>
+~~~
+
+
+
+
 
 ---
 
