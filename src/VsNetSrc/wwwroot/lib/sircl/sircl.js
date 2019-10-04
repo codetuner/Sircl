@@ -69,7 +69,7 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
                 },
                 205: function (data, textStatus, jqXHR) { // Reset Content : issue a page refresh
                     if (onSuccessDelegate) onSuccessDelegate(event, triggerElement);
-                    var location = jqXHR.getResponseHeader("Location") || window.location.href;
+                    var location = jqXHR.getResponseHeader("Location") || (window.location.origin + window.location.pathname);
                     window.history.replaceState(null, document.title, location);
                     window.location.href = location;
                 },
@@ -88,7 +88,9 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
 				if (onErrorDelegate) {
 					onErrorDelegate(event, triggerElement);
 				} else {
-					if (jqXHR.responseText.indexOf("#FULL_PAGE#") > -1) {
+                    if (jqXHR.responseText == undefined) {
+                        alert(jqXHR.statusText);
+                    } else if (jqXHR.responseText.indexOf("#FULL_PAGE#") > -1) {
 						document.open();
 						document.write(jqXHR.responseText);
 						document.close();
@@ -237,7 +239,7 @@ $(document).ready(function () {
             $(event.state.inlineTarget).loaded();
         }
         else if (event.state == null) {
-            window.location = window.location;
+            //window.location = window.location;
         }
     };
 

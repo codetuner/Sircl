@@ -23,7 +23,7 @@ var __rb_eventactionfx = {
             target.prop("disabled", false);
         } else {
             target.prop("disabled", true);
-            target.select("input[type=checkbox]").prop("checked", false);
+            target.filter("input[type=checkbox]").prop("checked", false);
         }
     },
     propagate: function (event) {
