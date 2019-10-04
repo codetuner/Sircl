@@ -11,6 +11,7 @@ __rb.hide = __rb.hideByClass;
 __rb.getDialog = function (item) { return $(item).closest('.modal'); };
 __rb.closeDialog = function (item) { var dlg = __rb.getDialog(item); if (dlg.length) dlg.modal('hide'); };
 __rb.openDialog = function (item) { var dlg = __rb.getDialog(item); if (dlg.length) dlg.modal('show'); };
+__rb.referrer = document.referrer;
 __rb.submitInline = function (event, triggerElement, formOrData, method, href, target, inlineTarget, inlineCached, hist, onSuccessDelegate, onErrorDelegate) {
     if (inlineTarget) {
         if (inlineCached) {
@@ -36,10 +37,13 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
             statusCode: {
                 200: function (data, textStatus, jqXHR) { // OK : new content is to be rendered, if in dialog, open it
                     if (onSuccessDelegate) onSuccessDelegate(event, triggerElement);
-                    if (hist == "push")
+                    if (hist == "push") {
+                        __rb.referrer = window.location.href.split("#")[0];
                         window.history.pushState(null, document.title, href);
-                    else if (hist == "set")
+                    } else if (hist == "set") {
+                        __rb.referrer = window.location.href.split("#")[0];
                         window.history.replaceState(null, document.title, href);
+                    }
                     if (data.indexOf("#FULL_PAGE#") > -1) {
                         document.open();
                         document.write(data);
@@ -69,7 +73,7 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
                 },
                 205: function (data, textStatus, jqXHR) { // Reset Content : issue a page refresh
                     if (onSuccessDelegate) onSuccessDelegate(event, triggerElement);
-                    var location = jqXHR.getResponseHeader("Location") || (window.location.origin + window.location.pathname);
+                    var location = jqXHR.getResponseHeader("Location") || (window.location.href.split("#")[0]);
                     window.history.replaceState(null, document.title, location);
                     window.location.href = location;
                 },
@@ -373,6 +377,13 @@ jQuery.fn.extend({
                 }
             } else {
                 $(this).val(value);
+            }
+        });
+
+        /// Replace href value with "history:back" if href value = referrer url:
+        $(this).find("a.back").each(function () {
+            if ($(this).attr('href') == __rb.referrer) {
+                $(this).attr('href', 'history:back');
             }
         });
 

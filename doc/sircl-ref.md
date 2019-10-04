@@ -532,6 +532,9 @@ on the attributed element, when an event occurs on the elements the attribute's 
 
 Enabled the element if any of the css-selector matching elements is checked. Disable the element if none is checked.
 
+*This is different from the `ifchecked-enable` event action as the latter one enables (or disables) all matches of the given css-selector when the attributed checkbox is checked.
+While the `enable-ifchecked-any` attribute enables the attributed element when any of the checkboxes matching the selector is checked.*
+
 For instance, the following button will be enabled if and only if at least one of the checkboxes is checked:
 
 ~~~html
@@ -578,6 +581,13 @@ Elements with this class are shown while an (ajax) call is in progress.
 #### Class `load-in-progress-hide`
 
 Elements with this class are hidden while an (ajax) call is in progress.
+
+### Miscelaneous
+
+#### Class `back`
+
+When an anchor has the `back` class, and it's href points to the referrer page, it's href is replaced by "history:back"
+causing the browser to do a regular back navigation instead of a new page request.
 
 ### Context menus (draft)
 
