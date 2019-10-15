@@ -608,5 +608,51 @@ I.e: by adding this contextmenu, richt-clicking on the parent of this element wi
 
 (see: https://micropyramid.com/blog/jquery-mouse-events-and-touch-events/)
 
+
+---
+
+## Extendibility
+
+### Partial page loads
+
+When a page part is loaded (as opposed to a full page load), the document load event
+is not triggered. As a result, the loaded part is not initialized, and no transformations are
+performed on its content. Also, no event handlers can be attached to its elements.
+
+The latter issue is often solved by writing event handlers on the document body object, as in:
+
+~~~js
+$(document.body).on("click", "button", function (event) {
+    alert("Button clicked.");
+});
+~~~
+
+This event handler will be triggered on button elements even if those button elements
+are loaded after declaring the event handler.
+
+However, transformations have to be reapplied, and applied only to the loaded part.
+
+Hence, the following will add a `blue` class to each row, only if the row was present during page load:
+
+~~~js
+$(function() {
+    $(document.body).find("div.row").each(function () {
+        $(this).addClass("blue");
+    });
+});
+~~~
+
+To trigger the function on both page loads and partial page loads, use the `$$` initialization function.
+The function gets a parameter with the loaded scope:
+
+~~~js
+$$(function(scope) {
+    $(scope).find("div.row").each(function () {
+        $(this).addClass("blue");
+    });
+});
+~~~
+
+
 ---
 https://en.support.wordpress.com/markdown-quick-reference/

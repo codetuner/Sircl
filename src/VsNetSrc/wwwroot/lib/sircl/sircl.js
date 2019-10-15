@@ -243,7 +243,7 @@ $(document).ready(function () {
             $(event.state.inlineTarget).loaded();
         }
         else if (event.state == null) {
-            //window.location = window.location;
+            window.history.go();
         }
     };
 
@@ -308,6 +308,12 @@ $(document).ready(function () {
 /// Loaded extension to be executed on lazy loaded DOM objects:
 /// Each loader extension element is an array with at [0] the function to call and at [1] optional data to provide.
 var rbLoaderExtensions = [];
+
+/// Provide a $$ function to register delay loader extensions:
+function $$ (callback, optionalData) {
+    rbLoaderExtensions.push([callback, optionalData]);
+};
+
 jQuery.fn.extend({
 
     /// Defines a "loaded()" function to be called after dynamically loading HTML parts:

@@ -32,8 +32,8 @@ PAUSE
 
 PUSHD "%~dp0dist\sircl-%Version%"
 
-NPM login
-NPM publish
+CALL NPM login
+CALL NPM publish
 
 POPD
 
