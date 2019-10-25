@@ -13,7 +13,7 @@ $(document).ready(function () {
             var item = $(this)[0];
             setTimeout(function () {
                 item.focus();
-                item.select();
+                try { $(this)[0].select(); } catch (x) { }
             }, 300);
         });
     });

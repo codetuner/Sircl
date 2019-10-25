@@ -1,6 +1,14 @@
 ﻿/* Sircl $$version$$ core */
 /* (c) Rudi Breedenraedt */
 
+/// Polyfils
+// Have IE support "endsWith()" function on strings:
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function (suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
 /// Globals:
 var __rb = {};
 __rb.html_spinner = '<i class="fas fa-circle-notch fa-spin"></i> ';
@@ -354,7 +362,7 @@ jQuery.fn.extend({
         /// Fix autofocus for lazy-loaded html:
         $(this).find("*[autofocus]:first").each(function (index) {
             $(this)[0].focus();
-            $(this)[0].select();
+            try { $(this)[0].select(); } catch(x) { }
         });
 
         /// Selects having 'autoinit' attribute will automatically select the corresponding item if the select had an empty value.
@@ -388,7 +396,7 @@ jQuery.fn.extend({
 
         /// Replace href value with "history:back" if href value = referrer url:
         $(this).find("a.back").each(function () {
-            if ($(this).attr('href') == __rb.referrer) {
+            if (__rb.referrer.endsWith($(this).attr('href'))) {
                 $(this).attr('href', 'history:back');
             }
         });
