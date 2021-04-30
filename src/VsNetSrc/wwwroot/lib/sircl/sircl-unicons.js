@@ -23,5 +23,6 @@ rbLoaderExtensions.push([function (loaded) {
         else if ($(this).hasClass("number")) $(this).html("&#x2116"); // №
         else if ($(this).hasClass("alarm-clock")) $(this).html("&#x23f0"); // ⏰
         else if ($(this).hasClass("print-screen")) $(this).html("&#x2399"); // ⎙
+        else if ($(this).hasClass("jack-o-lantern")) $(this).html("&#x1f383"); // 🎃
     });
 }]);

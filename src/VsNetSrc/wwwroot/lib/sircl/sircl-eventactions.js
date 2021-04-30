@@ -59,7 +59,7 @@ var __rb_eventactionfx = {
         data["name"] = event.target.name;
         data["value"] = $(event.target).val();
         if (event.target.type == "checkbox") data["checked"] = event.target.checked ? "true" : "false";
-        var inlineTarget = $(this).attr("inline-target");
+        var inlineTarget = $(this).inlineTarget()[0];
         if (!inlineTarget) {
             var inlineTargetId = $(this).attr('id') || new Date().getTime();
             $(this).attr('id', inlineTargetId);
@@ -189,12 +189,12 @@ $(document).ready(function () {
     /// <* onchange-submit=":form"> triggers form submission on change.
     $(document.body).on("change", "*[onchange-submit=':form']", function (event) {
         var form = $(this).closest('form');
-        var inlineTarget = $(this).attr("inline-target") || form.attr("inline-target");
+        var inlineTarget = $(this).inlineTarget()[0];
         var formaction = $(this).attr("formaction");
         if ($(this)[0] !== form[0] && (inlineTarget || formaction)) {
             var method = (form.attr("method") || "GET").toUpperCase();
             var href = $(this).attr("formaction") || form.attr("action") || "";
-            var target = $(this).attr("target") || form.attr("target") || null;
+            var target = $(this).target();
             __rb.submitInline(event, $(this), form, method, href, target, inlineTarget, false, null);
         } else {
             form.submit();

@@ -1,6 +1,8 @@
 ﻿/* Sircl $$version$$ core */
 /* (c) Rudi Breedenraedt */
 
+var __rb = {};
+
 /// Polyfils
 // Have IE support "endsWith()" function on strings:
 if (!String.prototype.endsWith) {
@@ -9,8 +11,186 @@ if (!String.prototype.endsWith) {
     };
 }
 
+/// JQuery extensions:
+jQuery.fn.extend({
+    closestAttr: function (attrName) {
+        var cattr = this.closest("*["+attrName+"]");
+        if (cattr.length > 0) {
+            return cattr.attr(attrName);
+        } else {
+            return undefined;
+        }
+    },
+    target: function () {
+        // Return closest target (string "_self", "_blank" or whatever) or null if none:
+        var cta = this.closest("*[target]");
+        if (cta) {
+            var t = cta.attr("target");
+            return (t == "") ? "_self" : t;
+        } else {
+            return null;
+        }
+    },
+    inlineTarget: function () {
+        // Return closest inline-target jQuery element:
+        var cita = this.closest("*[inline-target]");
+        if (cita.length > 0) {
+            var it = cita.attr("inline-target");
+            return (it == "") ? [] : $(it);
+        } else {
+            return this.closest(".inline-target");
+        }
+    }
+});
+
+/// Override load:
+__rb.load = $.fn.load;
+$.fn.load = function (url, params, callback) {
+    if (typeof url !== "string") {
+        return __rb.load.apply(this, [url, params, function (responseText, textStatus, jqXHR) {
+            if (status != "error") { $(this).loaded(); }
+            if (callback) callback(responseText, textStatus, jqXHR);
+        }]);
+    } else {
+        return __rb.load.apply(this, arguments);
+    }
+};
+
+__rb.get = function (event, trigger, onSuccessDelegate, onFailureDelegate) {
+    // Eval href:
+    var jqtrigger = $(trigger);
+    var href = jqtrigger.attr("href");
+    var elementName = trigger.tagName;
+    if (href === "" || href === "null") {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    } else if (href === "history:back") {
+        window.history.back();
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    } else if (href === "location:reload") {
+        location.reload();
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    } else if (href.indexOf("alert:") == 0) {
+        alert(href.substr(6));
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    } else {
+        var target = jqtrigger.target();
+        var inlineTarget = jqtrigger.inlineTarget()[0];
+        var inlineCached = (jqtrigger.attr("inline-cached") || "false").toLowerCase() == "true";
+        var hist = (jqtrigger.attr("history") || "push").toLowerCase();
+        if (target !== undefined || inlineTarget === undefined) {
+            if (elementName == 'A') {
+                return; // navigate link through default behavior
+            } else if (target /* and element is not 'A' */) {
+                window.open(href, target);
+                event.preventDefault();
+                return;
+            } else {
+                window.location = href;
+                event.preventDefault();
+                return;
+            }
+        } else { // Has inline target:
+            var inlineTargetId = null;
+            // If target is in dialog and dialog is not shown:
+            var tdlg = __rb.getDialog(inlineTarget);
+            if (tdlg.length > 0 && !tdlg.is(".show")) {
+                // If current trigger is in a(nother) modal, close it first:
+                jqtrigger.removeClass("show");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+                // If in dialog, open it:
+                __rb.openDialog(inlineTarget);
+            }
+            // Perform caching if requested:
+            if (inlineCached) {
+                // Hide context menus first:
+                $(".contextmenu").css("display", "none");
+                // Get id of inlineTarget:
+                if (inlineTargetId == null) {
+                    inlineTargetId = $(inlineTarget).attr('id') || new Date().getTime();
+                    $(inlineTarget).attr('id', inlineTargetId);
+                }
+                // Cache current state:
+                window.history.replaceState({ inlineRestore: true, inlineTarget: '#' + inlineTargetId, inlineHtml: $(inlineTarget).html() }, document.title, window.location.href);
+            }
+            // Set loading:
+            $(document.body).addClass("load-in-progress");
+            __rb.hide($(".load-in-progress-hide"), true);
+            __rb.hide($(".load-in-progress-show"), false);
+            // Perform GET:
+            $.ajax({
+                url: href,
+                cache: false,
+                data: null,
+                method: "GET",
+                statusCode: {
+                    200: function (data, textStatus, jqXHR) {
+                        if (onSuccessDelegate) onSuccessDelegate(event, trigger);
+                        if (hist == "push") {
+                            __rb.referrer = window.location.href.split("#")[0];
+                            window.history.pushState(null, document.title, href);
+                        } else if (hist == "set") {
+                            __rb.referrer = window.location.href.split("#")[0];
+                            window.history.replaceState(null, document.title, href);
+                        }
+                        if (data.indexOf("#FULL_PAGE#") > -1) {
+                            document.open();
+                            document.write(data);
+                            document.close();
+                        } else {
+                            if (inlineTargetId == null) {
+                                inlineTargetId = $(inlineTarget).attr('id') || new Date().getTime();
+                                $(inlineTarget).attr('id', inlineTargetId);
+                            }
+                            $(inlineTarget).html(data);
+                            $(inlineTarget).find("*[inline-target=local]").each(function () { $(this).attr('inline-target', "#" + inlineTargetId); });
+                            $(inlineTarget).loaded();
+                        }
+                    },
+                    202: function (data, textStatus, jqXHR) {  // Accepted : just an acknowledgment, no action
+                        if (onSuccessDelegate) onSuccessDelegate(event, triggerElement);
+                        // Check for a 'Location' header to perform a redirect:
+                        var redirectLocation = jqXHR.getResponseHeader('Location');
+                        if (redirectLocation) window.location = redirectLocation;
+                    },
+                    204: function (data, textStatus, jqXHR) { // No Content : clears the content, close dialog if in one.
+                        if (onSuccessDelegate) onSuccessDelegate(event, triggerElement);
+                        $(inlineTarget).html("");
+                        // If in dialog, close it:
+                        __rb.closeDialog(inlineTarget);
+                        // Check for a 'Location' header to perform a redirect:
+                        var redirectLocation = jqXHR.getResponseHeader('Location');
+                        if (redirectLocation) window.location = redirectLocation;
+                    },
+                    205: function (data, textStatus, jqXHR) {
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        $(document.body).removeClass("load-in-progress");
+                        __rb.hide($(".load-in-progress-hide"), false);
+                        __rb.hide($(".load-in-progress-show"), true);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        if (onFailureDelegate) {
+                            onFailureDelegate(event, trigger, jqXHR, textStatus, errorThrown);
+                        } else {
+                            alert(error);
+                        }
+                    }
+                }
+            });
+        }
+    }
+};
+
 /// Globals:
-var __rb = {};
 __rb.html_spinner = '<i class="fas fa-circle-notch fa-spin"></i> ';
 __rb.hideByClass = function (item, hide) { if (hide) item.addClass("hidden"); else item.removeClass("hidden"); }; // Using hidden class
 __rb.hideByJquery = function (item, hide) { if (hide) item.hide(0); else item.show(0); }; // Using jquery hide/show method (number parameter is animation duration)
@@ -22,9 +202,17 @@ __rb.openDialog = function (item) { var dlg = __rb.getDialog(item); if (dlg.leng
 __rb.referrer = document.referrer;
 __rb.submitInline = function (event, triggerElement, formOrData, method, href, target, inlineTarget, inlineCached, hist, onSuccessDelegate, onErrorDelegate) {
     if (inlineTarget) {
+        var inlineTargetId = null;
         if (inlineCached) {
-            $(".contextmenu").css("display", "none"); // Hides context menu's first
-            window.history.replaceState({ inlineRestore: true, inlineTarget: inlineTarget, inlineHtml: $(inlineTarget).html() }, document.title, window.location.href);
+            // Hide context menus first:
+            $(".contextmenu").css("display", "none");
+            // Get id of inlineTarget:
+            if (inlineTargetId == null) {
+                inlineTargetId = $(inlineTarget).attr('id') || new Date().getTime();
+                $(inlineTarget).attr('id', inlineTargetId);
+            }
+            // Cache current state:
+            window.history.replaceState({ inlineRestore: true, inlineTarget: '#' + inlineTargetId, inlineHtml: $(inlineTarget).html() }, document.title, window.location.href);
         }
         if (event != null && event.target.dataset.dismiss == "modal") {
             // Fix modal backdrop staying when closing modal inside inline target:
@@ -57,8 +245,13 @@ __rb.submitInline = function (event, triggerElement, formOrData, method, href, t
                         document.write(data);
                         document.close();
                     } else {
+                        if (inlineTargetId == null) {
+                            inlineTargetId = $(inlineTarget).attr('id') || new Date().getTime();
+                            $(inlineTarget).attr('id', inlineTargetId);
+                        }
                         $(inlineTarget).html(data);
-                        $(inlineTarget).find("*[inline-target=local]").each(function () { $(this).attr('inline-target', inlineTarget); });
+                        $(inlineTarget).find("*[inline-target=local]").each(function () { $(this).attr('inline-target', "#" + inlineTargetId); });
+                        //$(inlineTarget).find("FORM:not([inline-target])").each(function () { $(this).attr('inline-target', "#" + inlineTargetId); });
                         $(inlineTarget).loaded();
                         // If in dialog, open it:
                         __rb.openDialog(inlineTarget);
@@ -185,8 +378,8 @@ $(document).ready(function () {
             event.stopPropagation();
             return;
         }
-        var target = $(this).attr("target");
-        var inlineTarget = $(this).attr("inline-target");
+        var target = $(this).target();
+        var inlineTarget = $(this).inlineTarget()[0];
         var inlineCached = ($(this).attr("inline-cached") || "false").toLowerCase() == "true";
         var hist = ($(this).attr("history") || "default").toLowerCase();
 
@@ -211,17 +404,19 @@ $(document).ready(function () {
         }
     });
 
-    $(document.body).on("click", "FORM BUTTON[type=submit][inline-target]", function (event) {
+    $(document.body).on("click", "FORM BUTTON:submit", function (event) {
         var form = $(this).closest('form');
         var method = (form.attr("method") || "GET").toUpperCase();
         var href = $(this).attr("formaction") || form.attr("action") || "";
-        var target = null; // Known to have inline-target which overrides target anyway
-        var inlineTarget = $(this).attr("inline-target");
-        // Mark form changed:
-        __rb.markFormChanged(form);
-        // Submit inline:
-        __rb.submitInline(event, $(this), form, method, href, target, inlineTarget, false, null);
-        return;
+        var target = $(this).target();
+        var inlineTarget = $(this).inlineTarget()[0];
+        var hist = ($(this).attr("history") || "default").toLowerCase();
+        if (inlineTarget) {
+            // Mark form changed:
+            __rb.markFormChanged(form);
+            // Submit inline:
+            __rb.submitInline(event, $(this), form, method, href, target, inlineTarget, false, hist);
+        }
     });
 
     /// On submit form:
@@ -229,8 +424,8 @@ $(document).ready(function () {
         var form = $(this).closest('form');
         var method = (form.attr("method") || "GET").toUpperCase();
         var href = form.attr("action") || "";
-        var target = null; // If no inline-target, then default behavior will see target.
-        var inlineTarget = $(this).attr("inline-target");
+        var target = $(this).target();
+        var inlineTarget = $(this).inlineTarget()[0];
         var inlineCached = ($(this).attr("inline-cached") || "false").toLowerCase() == "true";
         var hist = ($(this).attr("history") || "default").toLowerCase();
         if (inlineTarget) {
@@ -257,6 +452,12 @@ $(document).ready(function () {
 
     /// Show spinner in executing button:
     $(document.body).on("click", "BUTTON", function (event) {
+        // If button is submit button, first check validators:
+        if ($(this).is(":submit")) {
+            var form = $(this).closest("FORM")[0];
+            if (form) if (!form.checkValidity()) return;
+        }
+        // Render spinner:
         $(this).find(".spinner").replaceWith(__rb.html_spinner);
     });
 
@@ -361,8 +562,9 @@ jQuery.fn.extend({
 
         /// Fix autofocus for lazy-loaded html:
         $(this).find("*[autofocus]:first").each(function (index) {
-            $(this)[0].focus();
-            try { $(this)[0].select(); } catch(x) { }
+            var item = $(this)[0];
+            item.focus();
+            try { item.select(); } catch(x) { }
         });
 
         /// Selects having 'autoinit' attribute will automatically select the corresponding item if the select had an empty value.
